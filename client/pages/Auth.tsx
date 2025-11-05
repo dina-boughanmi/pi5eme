@@ -52,7 +52,7 @@ export default function Auth() {
 
       // Redirect to dashboard
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/menu");
       }, 100);
     } catch (err) {
       setError("An error occurred. Please try again.");

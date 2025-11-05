@@ -11,18 +11,16 @@
     ]
   },
   "scripts": {
-    "dev": "vite",
-    "build": "npm run build:client && npm run build:server",
-    "build:client": "vite build",
-    "build:server": "vite build --config vite.config.server.ts",
-    "start": "node dist/server/node-build.mjs",
-    "test": "vitest --run",
-    "format.fix": "prettier --write .",
-    "typecheck": "tsc"
-  },
+  "dev:server": "ts-node server/index.ts",
+  "dev:client": "vite",
+  "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+  "build": "vite build && tsc",
+  "start": "node dist/server/node-build.js"
+},
   "dependencies": {
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "next": "^14.2.33",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -70,6 +68,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "concurrently": "^9.2.1",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
@@ -85,7 +84,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.62.0",
     "react-resizable-panels": "^3.0.4",
-    "react-router-dom": "^6.30.1",
+    "react-router-dom": "^7.9.5",
     "recharts": "^2.12.7",
     "serverless-http": "^3.2.0",
     "sonner": "^1.7.4",
@@ -93,8 +92,9 @@
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.176.0",
+    "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "vaul": "^1.1.2",
     "vite": "^7.1.2",
     "vitest": "^3.2.4"

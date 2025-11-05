@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Job {
+  id              Int      @id @default(autoincrement())
+  title           String
+  company         String
+  location        String
+  salary          String
+  skills          String
+  description     String
+  fullDescription String
+  requiredSkills  String
+  cvs             CV[]     @relation("JobCVs") // relation avec les CV liés
+}
+
+model CV {
+  id          Int      @id @default(autoincrement())
+  candidate   String
+  email       String
+  summary     String?
+  skills      String
+  experience  String?
+  jobId       Int?     // optionnel si non lié directement à un Job
+  job         Job?     @relation("JobCVs", fields: [jobId], references: [id])
+  createdAt   DateTime @default(now())
+}

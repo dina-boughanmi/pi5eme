@@ -17,13 +17,13 @@ function SimpleChatButton() {
       <button
         onClick={() => setShowChat((prev) => !prev)}
         style={{
-    padding: "10px 20px",
-    backgroundImage: "linear-gradient(90deg, #3b82f6, #10b981)", // bleu → vert
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  }}
+          padding: "10px 20px",
+          backgroundImage: "linear-gradient(90deg, #3b82f6, #10b981)", // bleu → vert
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
       >
         {showChat ? "Close CV chat" : "Career Chit-Chat!"}
       </button>
@@ -73,7 +73,12 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -162,14 +167,21 @@ export default function Dashboard() {
               />
             </div>
           </div>
-        </div>
-        
-        {/* Ajout du bouton de chat dans le header */}
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
-          <SimpleChatButton />
+
+          {/* Ajout du bouton de chat dans le header */}
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+            <SimpleChatButton />
+          </div>
         </div>
       </header>
-            
+
+      {/* ======== Bouton Back to Menu ======== */}
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <Button variant="outline" onClick={() => navigate("/menu")}>
+          🔙 Back to Menu
+        </Button>
+      </div>
+
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-2">Featured Opportunities</h2>
@@ -200,9 +212,7 @@ export default function Dashboard() {
               />
             </svg>
             <h3 className="text-lg font-semibold text-foreground mb-1">No jobs found</h3>
-            <p className="text-muted-foreground">
-              Try adjusting your search filters
-            </p>
+            <p className="text-muted-foreground">Try adjusting your search filters</p>
           </div>
         )}
       </main>

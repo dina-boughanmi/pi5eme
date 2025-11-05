@@ -10,6 +10,10 @@ import { useAuth } from "@/hooks/useAuth";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Index from "./pages/Index";
+import Menu from "./pages/menu";
+import JobManager from "./pages/JobManager";
+import AgentAIRecruter from "./pages/AgentAIRecruter";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +29,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const AuthRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/menu" replace />; // Redirection vers menu après login
   }
   return <>{children}</>;
 };
@@ -38,6 +42,16 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+
+          <Route
+            path="/menu"
+            element={
+              <ProtectedRoute>
+                <Menu />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/auth"
             element={
@@ -46,6 +60,7 @@ const App = () => (
               </AuthRoute>
             }
           />
+
           <Route
             path="/dashboard"
             element={
@@ -54,7 +69,24 @@ const App = () => (
               </ProtectedRoute>
             }
           />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+
+          <Route
+            path="/jobManager"
+            element={
+              <ProtectedRoute>
+                <JobManager />
+              </ProtectedRoute>
+            }
+          />
+            <Route
+            path="/AgentAIRecruter"
+            element={
+              <ProtectedRoute>
+                <AgentAIRecruter />
+              </ProtectedRoute>
+            }
+          />
+          {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
