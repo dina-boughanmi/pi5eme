@@ -1,69 +1,90 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
-import fs from "fs";
-import path from "path";
+import { jobs as jobData, Job } from "./data/jobs";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// === Fichier de stockage ===
-const DATA_FILE = path.join(__dirname, "jobs.json");
+// Copie en mémoire (comme une base de données temporaire)
+let jobs: Job[] = [...jobData];
 
-// === Fonction pour lire les jobs depuis le fichier ===
-function readJobs(): any[] {
-  try {
-    const data = fs.readFileSync(DATA_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch (err) {
-    return []; // si fichier n'existe pas encore
-  }
-}
-
-// === Fonction pour écrire les jobs dans le fichier ===
-function writeJobs(jobs: any[]) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(jobs, null, 2), "utf-8");
-}
-
-// === Routes API ===
-
-// Récupérer tous les jobs
-app.get("/api/jobs", (req, res) => {
-  const jobs = readJobs();
+/**
+ * 🟢 GET /api/jobs
+ * Récupérer tous les jobs
+ */
+app.get("/api/jobs", (req: Request, res: Response) => {
   res.json(jobs);
 });
 
-// Ajouter un job
-app.post("/api/jobs", (req, res) => {
-  const jobs = readJobs();
-  const newJob = { id: jobs.length ? jobs[jobs.length - 1].id + 1 : 1, ...req.body };
-  jobs.push(newJob);
-  writeJobs(jobs);
-  res.json(newJob);
+/**
+ * 🟢 GET /api/jobs/:id
+ * Récupérer un job par ID
+ */
+app.get("/api/jobs/:id", (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const job = jobs.find((j) => j.id === id);
+  if (!job) {
+    return res.status(404).json({ message: "Job not found" });
+  }
+  res.json(job);
 });
 
-// Modifier un job
-app.put("/api/jobs", (req, res) => {
-  const jobs = readJobs();
-  const index = jobs.findIndex(j => j.id === req.body.id);
-  if (index === -1) return res.status(404).json({ error: "Job not found" });
+/**
+ * 🟡 POST /api/jobs
+ * Ajouter un nouveau job
+ */
+app.post("/api/jobs", (req: Request, res: Response) => {
+  const newJob: Job = {
+    id: jobs.length ? Math.max(...jobs.map((j) => j.id)) + 1 : 1,
+    ...req.body,
+  };
+
+  // Validation simple
+  if (!newJob.title || !newJob.company || !newJob.description) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  jobs.push(newJob);
+  res.status(201).json(newJob);
+});
+
+/**
+ * 🟠 PUT /api/jobs/:id
+ * Modifier un job existant
+ */
+app.put("/api/jobs/:id", (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const index = jobs.findIndex((j) => j.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ message: "Job not found" });
+  }
+
   jobs[index] = { ...jobs[index], ...req.body };
-  writeJobs(jobs);
   res.json(jobs[index]);
 });
 
-// Supprimer un job
-app.delete("/api/jobs", (req, res) => {
-  const jobs = readJobs();
-  const index = jobs.findIndex(j => j.id === req.body.id);
-  if (index === -1) return res.status(404).json({ error: "Job not found" });
-  const deleted = jobs.splice(index, 1);
-  writeJobs(jobs);
-  res.json(deleted[0]);
+/**
+ * 🔴 DELETE /api/jobs/:id
+ * Supprimer un job
+ */
+app.delete("/api/jobs/:id", (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const index = jobs.findIndex((j) => j.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ message: "Job not found" });
+  }
+
+  const deletedJob = jobs.splice(index, 1);
+  res.json({ message: "Job deleted", job: deletedJob[0] });
 });
 
-// Lancer le serveur
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`🚀 Server running on http://localhost:${port}`);
+/**
+ * 🚀 Lancer le serveur
+ */
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
 });

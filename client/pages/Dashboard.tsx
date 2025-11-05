@@ -8,41 +8,13 @@ import { Input } from "@/components/ui/input";
 import ApplicationModal from "@/components/ApplicationModal";
 import ChatCVInterface from "@/pages/agentAICandidate";
 
-// Composant pour le bouton de chat
-function SimpleChatButton() {
-  const [showChat, setShowChat] = useState(false);
-
-  return (
-    <div>
-      <button
-        onClick={() => setShowChat((prev) => !prev)}
-        style={{
-          padding: "10px 20px",
-          backgroundImage: "linear-gradient(90deg, #3b82f6, #10b981)", // bleu → vert
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
-      >
-        {showChat ? "Close CV chat" : "Career Chit-Chat!"}
-      </button>
-
-      {showChat && (
-        <div style={{ marginTop: "20px", border: "1px solid #ccc", padding: "10px" }}>
-          <ChatCVInterface />
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showApplicationModal, setShowApplicationModal] = useState(false);
+  const [showAI, setShowAI] = useState(false);
 
   if (!user) {
     navigate("/auth");
@@ -143,6 +115,7 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* 🔎 Barre de recherche mobile */}
           <div className="sm:hidden">
             <div className="relative">
               <svg
@@ -167,21 +140,10 @@ export default function Dashboard() {
               />
             </div>
           </div>
-
-          {/* Ajout du bouton de chat dans le header */}
-          <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
-            <SimpleChatButton />
-          </div>
         </div>
       </header>
 
-      {/* ======== Bouton Back to Menu ======== */}
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <Button variant="outline" onClick={() => navigate("/menu")}>
-          🔙 Back to Menu
-        </Button>
-      </div>
-
+      {/* === Liste des jobs === */}
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-2">Featured Opportunities</h2>
@@ -217,6 +179,7 @@ export default function Dashboard() {
         )}
       </main>
 
+      {/* === Modal d'application === */}
       {showApplicationModal && selectedJob && (
         <ApplicationModal
           job={selectedJob}
@@ -224,7 +187,26 @@ export default function Dashboard() {
             setShowApplicationModal(false);
             setSelectedJob(null);
           }}
+          onNext={() => {
+            setShowApplicationModal(false);
+            setShowAI(true);
+          }}
         />
+      )}
+
+      {/* === Agent AI : Review Match === */}
+      {showAI && (
+        <div className="fixed inset-0 bg-background/90 z-50 flex flex-col">
+          <div className="p-4 flex justify-between items-center border-b border-border">
+            <h2 className="text-2xl font-bold">🤖 Review Match – AI Agent</h2>
+            <Button variant="outline" onClick={() => setShowAI(false)}>
+              ✖ Close
+            </Button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4">
+            <ChatCVInterface />
+          </div>
+        </div>
       )}
     </div>
   );
